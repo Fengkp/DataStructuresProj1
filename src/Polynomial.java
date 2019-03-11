@@ -179,10 +179,109 @@ public class Polynomial implements PolynomialInterface {
     }
 
     public Polynomial divide(Polynomial p) throws Exception{
-        throw new UnsupportedOperationException("Not implemented");
+        SinglyLinkedList remainderList = list;
+        String result = "";
+        String newLead = "";
+        Node thisPointer = remainderList.getHead();
+        Node pPointer = p.getList().getHead();
+        Term thisPointerTerm;
+        Term pPointerTerm;
+        Term newTerm;
+        double newCoeff;
+        int newPower;
+
+
+        while (thisPointer != null) {
+            thisPointerTerm = (Term) thisPointer.getData();
+            pPointerTerm = (Term) pPointer.getData();
+
+            newCoeff = thisPointerTerm.getCoefficient() / pPointerTerm.getCoefficient();
+            newPower = thisPointerTerm.getPower() - pPointerTerm.getPower();
+            newTerm = new Term(Double.toString(newCoeff) + "X^" + Integer.toString(newPower));
+            if (newCoeff > 0)
+                result += "+" + newTerm.toString();
+            else
+                result += newTerm.toString();
+
+            thisPointer = thisPointer.getNext();
+            if (thisPointer == null)
+                break;
+            pPointer = pPointer.getNext();
+            thisPointerTerm = (Term) thisPointer.getData();
+            pPointerTerm = (Term) pPointer.getData();
+            newCoeff = thisPointerTerm.getCoefficient() - (pPointerTerm.getCoefficient() * newCoeff);
+            newLead = Double.toString(newCoeff) + "X^" + Integer.toString(thisPointerTerm.getPower());
+
+            for (int i = 0; i < p.getList().size(); i++)
+                remainderList.removeHead();
+            remainderList.insert(new Node(new Term(newLead)));
+            thisPointer = remainderList.getHead();
+            pPointer = p.getList().getHead();
+        }
+        if (result.charAt(0) == '+' || result.charAt(0) == '-')
+            result = result.substring(1);
+        return new Polynomial(result);
     }
     public Polynomial remainder(Polynomial p) throws Exception{
-        throw new UnsupportedOperationException("Not implemented");
+        SinglyLinkedList remainderList = list;
+        String result = "";
+        String newLead = "";
+        Node thisPointer = remainderList.getHead();
+        Node pPointer = p.getList().getHead();
+        Term thisPointerTerm;
+        Term pPointerTerm;
+        Term newTerm;
+        double newCoeff;
+        int newPower;
+
+
+        while (thisPointer != null) {
+            thisPointerTerm = (Term) thisPointer.getData();
+            pPointerTerm = (Term) pPointer.getData();
+
+            newCoeff = thisPointerTerm.getCoefficient() / pPointerTerm.getCoefficient();
+            newPower = thisPointerTerm.getPower() - pPointerTerm.getPower();
+            newTerm = new Term(Double.toString(newCoeff) + "X^" + Integer.toString(newPower));
+
+            thisPointer = thisPointer.getNext();
+            if (thisPointer == null) {
+                Node remainderPointer = remainderList.getHead();
+                while (remainderPointer != null){
+                    pPointer = pPointer.getNext();
+                    pPointerTerm = (Term) pPointer.getData();
+                    newCoeff = 0 - (pPointerTerm.getCoefficient() * newCoeff);
+                    newLead = Double.toString(newCoeff) + "X^" + Integer.toString(pPointerTerm.getPower());
+                    if (newCoeff != 0) {
+                        remainderList.removeHead();
+                        remainderList.insert(new Node(new Term(newLead)));
+                        remainderPointer = remainderPointer.getNext();
+                    }
+                }
+                break;
+            }
+
+            pPointer = pPointer.getNext();
+            thisPointerTerm = (Term) thisPointer.getData();
+            pPointerTerm = (Term) pPointer.getData();
+            newCoeff = thisPointerTerm.getCoefficient() - (pPointerTerm.getCoefficient() * newCoeff);
+            newLead = Double.toString(newCoeff) + "X^" + Integer.toString(thisPointerTerm.getPower());
+
+            for (int i = 0; i < p.getList().size(); i++)
+                remainderList.removeHead();
+            remainderList.insert(new Node(new Term(newLead)));
+            thisPointer = remainderList.getHead();
+            pPointer = p.getList().getHead();
+        }
+        for (Node remainderPointer = remainderList.getHead(); remainderPointer != null; remainderPointer = remainderPointer.getNext()) {
+            Term remainderTerm = (Term) remainderPointer.getData();
+            if (remainderTerm.getCoefficient() > 0)
+                result += "+" + remainderTerm.toString();
+            else
+                result += "-" + remainderTerm.toString();
+        }
+        if (result.charAt(0) == '+' || result.charAt(0) == '-')
+            result = result.substring(1);
+        return new Polynomial(result);
     }
 
     public final String toString() {

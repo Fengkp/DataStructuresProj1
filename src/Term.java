@@ -51,14 +51,17 @@ public class Term implements Comparable {
 
     public String toString() {
         String term = "";
+
+        if (power == 0)
+            return Double.toString(coefficient);
         if (coefficient != 1)
             term += Double.toString(coefficient) + "X";
         else
             term += "X";
         if (power != 1)
-            return term += "^" + Integer.toString(power);
-        else
-            return term;
+            term += "^" + Integer.toString(power);
+
+        return term;
     }
 
     @Override

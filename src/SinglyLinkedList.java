@@ -43,6 +43,11 @@ public class SinglyLinkedList<T> implements LinkedListInterface<T> {
         return head;
     }
 
+    public void removeHead() {
+        head = head.getNext();
+        size--;
+    }
+
     @Override
     public int size() {
         return size;
