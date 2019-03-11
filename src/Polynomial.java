@@ -187,34 +187,31 @@ public class Polynomial implements PolynomialInterface {
         Term thisPointerTerm;
         Term pPointerTerm;
         Term newTerm;
-        double newCoeff;
+        double resultCoeff;
         int newPower;
-
 
         while (thisPointer != null) {
             thisPointerTerm = (Term) thisPointer.getData();
             pPointerTerm = (Term) pPointer.getData();
-
-            newCoeff = thisPointerTerm.getCoefficient() / pPointerTerm.getCoefficient();
+            resultCoeff = thisPointerTerm.getCoefficient() / pPointerTerm.getCoefficient();
             newPower = thisPointerTerm.getPower() - pPointerTerm.getPower();
-            newTerm = new Term(Double.toString(newCoeff) + "X^" + Integer.toString(newPower));
-            if (newCoeff > 0)
+            newTerm = new Term(Double.toString(resultCoeff) + "X^" + Integer.toString(newPower));
+            if (resultCoeff > 0)
                 result += "+" + newTerm.toString();
             else
                 result += newTerm.toString();
 
-            thisPointer = thisPointer.getNext();
-            if (thisPointer == null)
-                break;
-            pPointer = pPointer.getNext();
-            thisPointerTerm = (Term) thisPointer.getData();
-            pPointerTerm = (Term) pPointer.getData();
-            newCoeff = thisPointerTerm.getCoefficient() - (pPointerTerm.getCoefficient() * newCoeff);
-            newLead = Double.toString(newCoeff) + "X^" + Integer.toString(thisPointerTerm.getPower());
-
-            for (int i = 0; i < p.getList().size(); i++)
+            for (pPointer = p.getList().getHead(); pPointer != null && thisPointer != null; pPointer = pPointer.getNext()) {
+                thisPointerTerm = (Term) thisPointer.getData();
+                pPointerTerm = (Term) pPointer.getData();
                 remainderList.removeHead();
-            remainderList.insert(new Node(new Term(newLead)));
+                double newLeadCoeff = thisPointerTerm.getCoefficient() - (pPointerTerm.getCoefficient() * resultCoeff);
+                if (newLeadCoeff != 0) {
+                    newLead = Double.toString(newLeadCoeff) + "X^" + Integer.toString(thisPointerTerm.getPower());
+                    remainderList.insert(new Node(new Term(newLead)));
+                }
+                thisPointer = thisPointer.getNext();
+            }
             thisPointer = remainderList.getHead();
             pPointer = p.getList().getHead();
         }
@@ -230,18 +227,13 @@ public class Polynomial implements PolynomialInterface {
         Node pPointer = p.getList().getHead();
         Term thisPointerTerm;
         Term pPointerTerm;
-        Term newTerm;
         double newCoeff;
-        int newPower;
-
 
         while (thisPointer != null) {
             thisPointerTerm = (Term) thisPointer.getData();
             pPointerTerm = (Term) pPointer.getData();
 
             newCoeff = thisPointerTerm.getCoefficient() / pPointerTerm.getCoefficient();
-            newPower = thisPointerTerm.getPower() - pPointerTerm.getPower();
-            newTerm = new Term(Double.toString(newCoeff) + "X^" + Integer.toString(newPower));
 
             thisPointer = thisPointer.getNext();
             if (thisPointer == null) {
@@ -259,7 +251,6 @@ public class Polynomial implements PolynomialInterface {
                 }
                 break;
             }
-
             pPointer = pPointer.getNext();
             thisPointerTerm = (Term) thisPointer.getData();
             pPointerTerm = (Term) pPointer.getData();
