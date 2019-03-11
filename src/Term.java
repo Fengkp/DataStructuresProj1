@@ -1,9 +1,9 @@
 public class Term implements Comparable {
-    private int coefficient, power;
-    private String termSign, term;
+    private double coefficient;
+    private int power;
+    private String termSign;
 
     public Term(String term) {
-        this.term = term;
         if (term.charAt(0) == '-') {
             termSign = "-";
             term = term.substring(1);
@@ -18,32 +18,24 @@ public class Term implements Comparable {
         power = parsePower(term);
     }
 
-    public int getCoefficient() {
+    public double getCoefficient() {
         return coefficient;
-    }
-
-    public void setCoefficient(int coefficient) {
-        this.coefficient = coefficient;
     }
 
     public int getPower() {
         return power;
     }
 
-    public void setPower(int power) {
-        this.power = power;
-    }
-
-    private int parseCoefficient(String term) {
+    private Double parseCoefficient(String term) {
         if (term.charAt(0) == 'X')
-            return 1;
+            return 1.0;
         for (int i = 0; i < term.length(); i++) {
             if (term.charAt(i) == 'X' && termSign.equals("+"))
-                return Integer.parseInt(term.substring(0, i));
+                return (Double.parseDouble(term.substring(0, i))) * 1.0;
             else if (term.charAt(i) == 'X' && termSign.equals("-"))
-                return Integer.parseInt(term.substring(0, i)) - (Integer.parseInt(term.substring(0, i)) * 2);
+                return (Double.parseDouble(term.substring(0, i)) - (Double.parseDouble(term.substring(0, i)) * 2)) * 1.0;
         }
-            return 0;
+            return 0.0;
     }
 
     private int parsePower(String term) {
@@ -58,7 +50,15 @@ public class Term implements Comparable {
     }
 
     public String toString() {
-        return term;
+        String term = "";
+        if (coefficient != 1)
+            term += Double.toString(coefficient) + "X";
+        else
+            term += "X";
+        if (power != 1)
+            return term += "^" + Integer.toString(power);
+        else
+            return term;
     }
 
     @Override

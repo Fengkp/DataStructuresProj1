@@ -24,98 +24,158 @@ public class Polynomial implements PolynomialInterface {
 
     @Override
     public Polynomial add(Polynomial p) {
-        SinglyLinkedList resultList = new SinglyLinkedList();
-        for (Node thisPointer = list.getHead(); thisPointer != null; thisPointer = thisPointer.getNext()) {
-            Term thisPointerTerm = (Term) thisPointer.getData();
-            for (Node pPointer = p.getList().getHead(); pPointer != null; pPointer = pPointer.getNext()) {
-                Term pPointerTerm = (Term) pPointer.getData();
-                if (thisPointerTerm.getPower() == pPointerTerm.getPower()) {
-                    int newCoeff = thisPointerTerm.getCoefficient() + pPointerTerm.getCoefficient();
-                    String newTerm = Integer.toString(newCoeff) + "X^" + thisPointerTerm.getPower();
-                    resultList.insert(new Node(newTerm));
-                }
-                else if (thisPointerTerm.getPower() > pPointerTerm.getPower()) {
-                    resultList.insert(new Node(thisPointerTerm));
-                    thisPointer = thisPointer.getNext();
-                }
-                else if (thisPointerTerm.getPower() < pPointerTerm.getPower())
-                    resultList.insert(new Node(pPointerTerm));
-            }
-            resultList.insert(new Node(thisPointerTerm));
-        }
         String result = "";
-        Term resultTerm = (Term) resultList.getHead().getData();
-        result += resultTerm.toString();
-        for (Node resultPointer = resultList.getHead().getNext(); resultPointer != null; resultPointer = resultPointer.getNext()) {
+        Node pPointer = p.getList().getHead();
+        Term thisPointerTerm;
+        Term pPointerTerm;
 
+        for (Node thisPointer = list.getHead(); thisPointer != null; thisPointer = thisPointer.getNext()) {
+            thisPointerTerm = (Term) thisPointer.getData();
+            pPointerTerm = (Term) pPointer.getData();
+            if (thisPointerTerm.getPower() == pPointerTerm.getPower()) {
+                double newCoeff = thisPointerTerm.getCoefficient() + pPointerTerm.getCoefficient();
+                if (newCoeff > 0) {
+                    result += "+" + Double.toString(newCoeff) + "X^" + thisPointerTerm.getPower();
+                    pPointer = pPointer.getNext();
+                }
+                else if (newCoeff < 0) {
+                    result += "-" + Double.toString(newCoeff) + "X^" + thisPointerTerm.getPower();
+                    pPointer = pPointer.getNext();
+                }
+                else // newCoeff is 0; Terms cancel out;
+                    pPointer = pPointer.getNext();
+            }
+            else if (pPointerTerm.getPower() > thisPointerTerm.getPower()) {
+                if (pPointerTerm.getCoefficient() > 0)
+                    result += "+" + pPointerTerm.toString();
+                else
+                    result += "-" + pPointerTerm.toString();
+                pPointer = pPointer.getNext();
+            }
+            else {
+                if (thisPointerTerm.getCoefficient() > 0)
+                    result += "+" + thisPointerTerm.toString();
+                else
+                    result += "-" + thisPointerTerm.toString();
+            }
         }
-//
-//        String sumResult = "";
-//        Node mainPointer, secondaryPointer;
-//        Term mainTerm, secondaryTerm;
-//
-//        if (list.size() > p.getList().size()) {
-//            mainPointer = list.getHead();
-//            secondaryPointer = p.getList().getHead();
-//        }
-//        else {
-//            mainPointer = p.getList().getHead();
-//            secondaryPointer = list.getHead();
-//        }
-//
-//        while (mainPointer.getData() != null) {
-//            mainTerm = (Term) mainPointer.getData();
-//            if (secondaryPointer.getData() != null)
-//                secondaryTerm = (Term) secondaryPointer.getData();
-//            else
-//                secondaryTerm = null;
-//
-//            if (mainTerm.getPower() == secondaryTerm.getPower()) {
-//                int sum = mainTerm.getCoefficient() + secondaryTerm.getCoefficient();
-//                if (sum >= 0)
-//                sumResult += sum + "X^" + mainTerm.getPower();
-//                mainPointer = mainPointer.getNext();
-//                secondaryPointer = secondaryPointer.getNext();
-//            }
-//            else if (mainTerm.getPower() > secondaryTerm.getPower() || secondaryTerm == null) {
-//                sumResult += mainTerm.toString();
-//                mainPointer = mainPointer.getNext();
-//            }
-//            else {
-//                sumResult += secondaryTerm.toString();
-//                secondaryPointer = secondaryPointer.getNext();
-//            }
-//        }
-//        return new Polynomial(sumResult);
-//
-//        if (p.getList().size() > size)
-//            size = p.getList().size();
-//
-//        for (int i = 0; i <= size; i++) {
-//            if (polyTerm1 == null) {
-//                sumResult += polyTerm2.toString();
-//            }
-//            else if (polyTerm2 == null)
-//                sumResult += polyTerm1.toString();
-//            else if (polyTerm1.getPower() > polyTerm2.getPower())
-//                sumResult += polyTerm1.toString();
-//            else if (polyTerm2.getPower() > polyTerm1.getPower())
-//                sumResult += polyTerm2.toString();
-//            else {
-//                int sum = polyTerm1.getCoefficient() + polyTerm2.getCoefficient();
-//                sumResult += sum + "X^" + polyTerm1.getPower();
-//            }
-        // }
+        while (pPointer != null) {
+            pPointerTerm = (Term) pPointer.getData();
+            if (pPointerTerm.getCoefficient() > 0)
+                result += "+" + pPointerTerm.toString();
+            else
+                result += "-" + pPointerTerm.toString();
+            pPointer = pPointer.getNext();
+        }
+        if (result.charAt(0) == '+' || result.charAt(0) == '-')
+            result = result.substring(1);
+        return new Polynomial(result);
     }
 
     @Override
     public Polynomial subtract(Polynomial p) {
-        return null;
+        String result = "";
+        Node pPointer = p.getList().getHead();
+        Term thisPointerTerm;
+        Term pPointerTerm;
+
+        for (Node thisPointer = list.getHead(); thisPointer != null; thisPointer = thisPointer.getNext()) {
+            thisPointerTerm = (Term) thisPointer.getData();
+            pPointerTerm = (Term) pPointer.getData();
+            if (thisPointerTerm.getPower() == pPointerTerm.getPower()) {
+                double newCoeff = thisPointerTerm.getCoefficient() - pPointerTerm.getCoefficient();
+                if (newCoeff > 0) {
+                    result += "+" + Double.toString(newCoeff) + "X^" + thisPointerTerm.getPower();
+                    pPointer = pPointer.getNext();
+                }
+                else if (newCoeff < 0) {
+                    result += "-" + Double.toString(newCoeff) + "X^" + thisPointerTerm.getPower();
+                    pPointer = pPointer.getNext();
+                }
+                else // newCoeff is 0; Terms cancel out;
+                    pPointer = pPointer.getNext();
+            }
+            else if (pPointerTerm.getPower() > thisPointerTerm.getPower()) {
+                if (pPointerTerm.getCoefficient() > 0)
+                    result += "-" + pPointerTerm.toString();
+                else
+                    result += "+" + pPointerTerm.toString();
+                pPointer = pPointer.getNext();
+            }
+            else {
+                if (thisPointerTerm.getCoefficient() > 0)
+                    result += "+" + thisPointerTerm.toString();
+                else
+                    result += "-" + thisPointerTerm.toString();
+            }
+        }
+        while (pPointer != null) {
+            pPointerTerm = (Term) pPointer.getData();
+            if (pPointerTerm.getCoefficient() < 0)
+                result += "+" + pPointerTerm.toString();
+            else
+                result += "-" + pPointerTerm.toString();
+            pPointer = pPointer.getNext();
+        }
+        if (result.charAt(0) == '+' || result.charAt(0) == '-')
+            result = result.substring(1);
+        return new Polynomial(result);
     }
 
     @Override
     public Polynomial multiply(Polynomial p) {
-        return null;
+        String result = "";
+        Term thisPointerTerm;
+        Term pPointerTerm;
+
+        // Multiply Terms
+        for (Node thisPointer = list.getHead(); thisPointer != null; thisPointer = thisPointer.getNext()) {
+            thisPointerTerm = (Term) thisPointer.getData();
+            for (Node pPointer = p.getList().getHead(); pPointer != null; pPointer = pPointer.getNext()) {
+                pPointerTerm = (Term) pPointer.getData();
+                double newCoeff = thisPointerTerm.getCoefficient() * pPointerTerm.getCoefficient();
+                int newPower = thisPointerTerm.getPower() + pPointerTerm.getPower();
+
+                if (newCoeff > 0)
+                    result += "+" + Double.toString(newCoeff) + "X^" + Integer.toString(newPower);
+                else
+                    result += "-" + Double.toString(newCoeff) + "X^" + Integer.toString(newPower);
+            }
+        }
+        if (result.charAt(0) == '+' || result.charAt(0) == '-')
+            result = result.substring(1);
+
+        // Add like terms
+        Polynomial resultPoly = new Polynomial(result);
+        String newResult = "";
+        Term resultTerm;
+        Term resultTermAfter;
+        double resultCoeff = 0;
+
+        for (Node resultPointer = resultPoly.getList().getHead(); resultPointer != null; resultPointer = resultPointer.getNext()) {
+            resultTerm = (Term) resultPointer.getData();
+            resultCoeff += resultTerm.getCoefficient();
+            if (resultPointer.getNext() != null) {
+                resultTermAfter = (Term) resultPointer.getNext().getData();
+
+                if (resultTerm.getPower() == resultTermAfter.getPower()) {
+                    while (resultTerm.getPower() == resultTermAfter.getPower()) {
+                        resultCoeff += resultTermAfter.getCoefficient();
+                        resultPointer = resultPointer.getNext();
+                        resultTerm = (Term) resultPointer.getData();
+                        resultTermAfter = (Term) resultPointer.getNext().getData();
+                    }
+                }
+            }
+            if (resultCoeff > 0)
+                newResult += "+" + Double.toString(resultCoeff) + "X^" + Integer.toString(resultTerm.getPower());
+            else
+                newResult += "-" + Double.toString(resultCoeff) + "X^" + Integer.toString(resultTerm.getPower());
+            resultCoeff = 0;
+        }
+        if (newResult.charAt(0) == '+' || newResult.charAt(0) == '-')
+            newResult = newResult.substring(1);
+        return new Polynomial(newResult);
     }
 
     public Polynomial divide(Polynomial p) throws Exception{
